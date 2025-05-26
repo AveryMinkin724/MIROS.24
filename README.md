@@ -21,11 +21,11 @@ Defines a lightweight assertion mechanism for debugging purposes. It allows for 
 
 # RTOS Architecture and Flow
 Thread Definition and Management
-Threads are defined using the OSThread structure, which includes:
+Threads are defined using the OSThread structure, which typically includes:
 
 - A pointer to the thread's stack.
-- The size of the stack.
-- A function pointer to the thread's entry function.
+- The size of the stack (not yet implemented).
+- A function pointer to the thread's entry function (not yet implemented).
 
 Threads are initialized and added to the OS_thread[] array, which holds pointers to all active threads. This array facilitates round-robin scheduling by maintaining the order of thread execution.
 
