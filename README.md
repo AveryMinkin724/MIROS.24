@@ -20,12 +20,43 @@ qassert.h
 Defines a lightweight assertion mechanism for debugging purposes. It allows for runtime checks and aids in identifying logical errors during development.
 
 # RTOS Architecture and Flow
-Thread Definition and Management
-Threads are defined using the OSThread structure, which typically includes:
+🧵 Thread Definition and the OSThread Structure
+In MIROS.24, the OSThread struct serves as the Thread Control Block (TCB). At present, it is a minimal structure defined in miros.h:
 
-- A pointer to the thread's stack.
-- The size of the stack (not yet implemented).
-- A function pointer to the thread's entry function (not yet implemented).
+`
+typedef struct {
+    void *sp;  // Stack pointer to the top of the thread's stack
+} OSThread;
+`
+
+This struct contains only a single member: a pointer to the stack (sp), which is used by the scheduler and context switching logic to manage thread execution. This minimalist TCB can be extended in the future to include more information such as:
+
+- Thread priority
+- Thread state (e.g., running, ready, blocked)
+- Thread ID
+- CPU usage statistics
+
+Each thread is initialized using the function OSThread_start() defined in miros.c. The signature is:
+
+`
+void OSThread_start(
+    OSThread *me,
+    OSThreadHandler threadHandler,
+    void *stkSto,
+    uint32_t stkSize
+);
+`
+
+The arguments are:
+
+- me: A pointer to the OSThread struct (TCB) to initialize
+- hreadHandler: The thread's entry function (a function pointer)
+- stkSto: A pointer to the base of the statically allocated stack array
+- stkSize: The number of uint32_t elements in the stack array
+
+Inside OSThread_start(), the RTOS initializes the thread’s stack manually, setting up an initial stack frame according to the ARM Cortex-M calling convention and exception return behavior. This setup mimics the context that the CPU would expect to see when resuming from an interrupt, ensuring the thread will start executing the correct entry function when context is first switched to it.
+
+The stack pointer (sp) member of the OSThread struct is then updated to point to the newly prepared top-of-stack, making it ready for the scheduler.
 
 Threads are initialized and added to the OS_thread[] array, which holds pointers to all active threads. This array facilitates round-robin scheduling by maintaining the order of thread execution.
 
