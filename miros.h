@@ -32,6 +32,7 @@
 #ifndef MIROS_H
 #define MIROS_H
 
+/* Thread Control Block Struct */
 typedef struct {
 		void *sp; /* stack pointer */ 
 		/* ... other attributes associated with a thread */
